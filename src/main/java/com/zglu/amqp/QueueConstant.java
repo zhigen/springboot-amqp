@@ -8,6 +8,10 @@ public class QueueConstant {
     private QueueConstant() {
     }
 
+    public static final String DLXQUEUE = "dlxQueue";
+
+    public static final String DLXEXCHANGE = "dlxExchange";
+
     public static final String DIRECTQUEUE = "directQueue";
 
     public static final String FANOUTQUEUE0 = "fanoutQueue0";

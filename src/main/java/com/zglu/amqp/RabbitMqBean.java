@@ -7,6 +7,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author zglu
  */
@@ -28,23 +31,42 @@ public class RabbitMqBean {
     }
 
     @Bean
+    public Queue dlxQueue() {
+        return new Queue(QueueConstant.DLXQUEUE);
+    }
+
+    @Bean
+    public DirectExchange dlxExchange() {
+        return new DirectExchange(QueueConstant.DLXEXCHANGE);
+    }
+
+    @Bean
+    public Binding dlxBinding() {
+        return BindingBuilder.bind(dlxQueue()).to(dlxExchange()).with(QueueConstant.DLXQUEUE);
+    }
+
+    @Bean
     public Queue directQueue() {
-        return new Queue(QueueConstant.DIRECTQUEUE, false);
+        return new Queue(QueueConstant.DIRECTQUEUE);
     }
 
     @Bean
     public Queue fanoutQueue0() {
-        return new Queue(QueueConstant.FANOUTQUEUE0, false);
+        return new Queue(QueueConstant.FANOUTQUEUE0);
     }
 
     @Bean
     public Queue fanoutQueue1() {
-        return new Queue(QueueConstant.FANOUTQUEUE1, false);
+        Map<String, Object> arguments = new HashMap<>(2);
+        // 绑定该队列到私信交换机
+        arguments.put("x-dead-letter-routing-key", QueueConstant.DLXQUEUE);
+        arguments.put("x-dead-letter-exchange", QueueConstant.DLXEXCHANGE);
+        return new Queue(QueueConstant.FANOUTQUEUE1, true, false, false, arguments);
     }
 
     @Bean
     public FanoutExchange fanoutExchange() {
-        return new FanoutExchange(QueueConstant.FANOUTEXCHANGE, false, false);
+        return new FanoutExchange(QueueConstant.FANOUTEXCHANGE);
     }
 
     @Bean
@@ -59,17 +81,17 @@ public class RabbitMqBean {
 
     @Bean
     public Queue topicQueue0() {
-        return new Queue(QueueConstant.TOPICQUEUE0, false);
+        return new Queue(QueueConstant.TOPICQUEUE0);
     }
 
     @Bean
     public Queue topicQueue1() {
-        return new Queue(QueueConstant.TOPICQUEUE1, false);
+        return new Queue(QueueConstant.TOPICQUEUE1);
     }
 
     @Bean
     public TopicExchange topicExchange() {
-        return new TopicExchange(QueueConstant.TOPICEXCHANGE, false, false);
+        return new TopicExchange(QueueConstant.TOPICEXCHANGE);
     }
 
     @Bean

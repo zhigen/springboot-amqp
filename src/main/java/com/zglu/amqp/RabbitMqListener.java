@@ -24,7 +24,7 @@ public class RabbitMqListener {
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (Exception e) {
             log.error(ERROR_MSG.concat(QueueConstant.DIRECTQUEUE), e);
-            channel.basicReject(message.getMessageProperties().getDeliveryTag(), true);
+            channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
         }
     }
 
@@ -35,7 +35,7 @@ public class RabbitMqListener {
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (Exception e) {
             log.error(ERROR_MSG.concat(QueueConstant.FANOUTQUEUE0), e);
-            channel.basicReject(message.getMessageProperties().getDeliveryTag(), true);
+            channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
         }
     }
 
@@ -43,10 +43,11 @@ public class RabbitMqListener {
     public void fanout1(String content, Channel channel, Message message) throws IOException {
         try {
             log.info(QueueConstant.FANOUTQUEUE1.concat(":").concat(content));
-            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+            throw new NullPointerException();
         } catch (Exception e) {
             log.error(ERROR_MSG.concat(QueueConstant.FANOUTQUEUE1), e);
-            channel.basicReject(message.getMessageProperties().getDeliveryTag(), true);
+            // 拒绝重回原队列，如队列配置了死信队列，则进入死信队列
+            channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
         }
     }
 
@@ -57,7 +58,7 @@ public class RabbitMqListener {
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (Exception e) {
             log.error(ERROR_MSG.concat(QueueConstant.TOPICQUEUE0), e);
-            channel.basicReject(message.getMessageProperties().getDeliveryTag(), true);
+            channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
         }
     }
 
@@ -68,7 +69,7 @@ public class RabbitMqListener {
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (Exception e) {
             log.error(ERROR_MSG.concat(QueueConstant.TOPICQUEUE1), e);
-            channel.basicReject(message.getMessageProperties().getDeliveryTag(), true);
+            channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
         }
     }
 }
